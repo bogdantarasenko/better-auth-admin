@@ -12,6 +12,8 @@
 - Auth pages: single dynamic route at `src/app/auth/[path]/page.tsx` using `<AuthView path={path} />` + `generateStaticParams` from `authViewPaths`
 - Server-side session check: `auth.api.getSession({ headers: await headers() })` from `@/lib/auth` — returns session or null
 - Middleware route protection: `getSessionCookie(req)` from `better-auth/cookies` — lightweight cookie check, no DB hit
+- Organization plugin: server `import { organization } from 'better-auth/plugins'`, client `import { organizationClient } from 'better-auth/client/plugins'`
+- better-auth-ui org components: `OrganizationSwitcher`, `OrganizationsCard`, `OrganizationSettingsCards`, `OrganizationMembersCard` from `@daveyplate/better-auth-ui`
 
 ---
 
@@ -91,4 +93,21 @@
   - Sign-out is `await authClient.signOut()` — it's a promise, not a component. Follow with `router.push('/auth/sign-in')` for redirect
   - The `organization` conditional on billing menu item was removed since org support is handled in US-006 — billing link now always shows
   - Clerk imports still remain in `use-nav.ts` and `org-switcher.tsx` — those are for US-006/US-007
+---
+
+## 2026-03-31 - US-006
+- What was implemented: Added better-auth organization plugin (server + client), generated org schema tables, replaced Clerk org-switcher with better-auth-ui OrganizationSwitcher, replaced workspaces page with OrganizationsCard, replaced team page with OrganizationSettingsCards
+- Files changed:
+  - `src/lib/auth.ts` — Added `organization()` plugin with `allowUserToCreateOrganization: true, creatorRole: 'owner'`
+  - `src/lib/auth-client.ts` — Added `organizationClient()` plugin
+  - `src/lib/auth-schema.ts` — Regenerated with organization, member, invitation tables + activeOrganizationId on session
+  - `src/components/org-switcher.tsx` — Replaced entire Clerk-based custom switcher with `<OrganizationSwitcher />` from `@daveyplate/better-auth-ui`
+  - `src/app/dashboard/workspaces/page.tsx` — Replaced `<OrganizationList>` from Clerk with `<OrganizationsCard />` from better-auth-ui
+  - `src/app/dashboard/workspaces/team/[[...rest]]/page.tsx` — Replaced `<OrganizationProfile>` from Clerk with `<OrganizationSettingsCards />` from better-auth-ui
+- **Learnings for future iterations:**
+  - Organization plugin import: `import { organization } from 'better-auth/plugins'` (server), `import { organizationClient } from 'better-auth/client/plugins'` (client)
+  - better-auth-ui org components: `OrganizationSwitcher`, `OrganizationsCard`, `OrganizationSettingsCards`, `OrganizationMembersCard` — all from `@daveyplate/better-auth-ui`
+  - Schema regeneration after adding plugins: `echo "y" | npx @better-auth/cli@latest generate --config ./src/lib/auth.ts --output ./src/lib/auth-schema.ts` then `npx drizzle-kit push`
+  - Organization tables created: organization, member, invitation; session table gets `activeOrganizationId` column
+  - Clerk imports remain in `use-nav.ts` — that's for US-007 (RBAC)
 ---

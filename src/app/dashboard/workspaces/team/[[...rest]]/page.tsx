@@ -1,7 +1,7 @@
 'use client';
 
 import PageContainer from '@/components/layout/page-container';
-import { OrganizationProfile } from '@clerk/nextjs';
+import { OrganizationSettingsCards } from '@daveyplate/better-auth-ui';
 import { teamInfoContent } from '@/config/infoconfig';
 
 export default function TeamPage() {
@@ -11,7 +11,7 @@ export default function TeamPage() {
       pageDescription='Manage your workspace team, members, roles, security and more.'
       infoContent={teamInfoContent}
     >
-      <OrganizationProfile />
+      <OrganizationSettingsCards />
     </PageContainer>
   );
 }
