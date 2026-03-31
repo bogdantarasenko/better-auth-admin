@@ -4,7 +4,7 @@
 
 This document explains the fully client-side RBAC (Role-Based Access Control) system for navigation items.
 
-**Key Insight**: Navigation visibility is UX only, not security. We can check everything client-side using Clerk's hooks!
+**Key Insight**: Navigation visibility is UX only, not security. We can check everything client-side using better-auth's hooks!
 
 ## Architecture
 
@@ -16,7 +16,7 @@ This document explains the fully client-side RBAC (Role-Based Access Control) sy
 ### Why Client-Side?
 
 - **Navigation visibility is UX only** - Users can't bypass security by seeing/hiding nav items
-- **Clerk provides all data client-side** - `useOrganization()` gives us `membership.permissions` and `membership.role`
+- **better-auth provides all data client-side** - `useActiveOrganization()` and `useActiveMember()` give us organization and role data
 - **Zero server calls** - Instant filtering, no loading states, no UI flashing
 - **Better performance** - No network latency, no async complexity
 
@@ -26,10 +26,10 @@ This document explains the fully client-side RBAC (Role-Based Access Control) sy
 
 ### All Checks Are Synchronous
 
-✅ **requireOrg**: Client-side check using `useOrganization()`  
-✅ **permission**: Client-side check using `membership.permissions` array  
-✅ **role**: Client-side check using `membership.role`  
-⚠️ **plan/feature**: Requires server-side check (see below)
+✅ **requireOrg**: Client-side check using `authClient.useActiveOrganization()`
+✅ **permission**: Client-side check using active member role
+✅ **role**: Client-side check using `authClient.useActiveMember()`
+⚠️ **plan/feature**: Checked via `authClient.subscription.list()` (see below)
 
 ### Zero Server Calls
 
@@ -76,28 +76,15 @@ function MyComponent() {
 
 ### Plan/Feature Checks
 
-Plans and features require Clerk's `has()` function which is server-side only. Options:
+Plans and features are checked via `authClient.subscription.list()`. Options:
 
-1. **Store in organization metadata** (recommended for navigation):
-
-   ```typescript
-   // In your organization setup
-   organization.publicMetadata.plan = 'pro';
-
-   // In nav-config.ts
-   access: {
-     requireOrg: true,
-     // Check metadata instead of plan
-   }
-   ```
-
-2. **Show item, protect at page level** (current approach):
+1. **Show item, protect at page level** (current approach):
    - Navigation item is shown
-   - Page component checks server-side and redirects/shows error if needed
+   - Page component checks subscription status and shows upgrade prompt if needed
 
-3. **Use server action** (if you really need it):
-   - Only for navigation items that absolutely need plan/feature checks
-   - Most navigation items won't need this
+2. **Check subscription client-side**:
+   - Use `authClient.subscription.list({ query: { referenceId: orgId } })` to get subscriptions
+   - Filter by status/plan to determine access
 
 ## Scalability
 
@@ -123,7 +110,7 @@ The system automatically:
 
 ### Adding New Access Types
 
-1. Add to `PermissionCheck` interface in `src/app/actions/rbac.ts`
+1. Add to `PermissionCheck` interface in `src/types/index.ts`
 2. Add check logic in `checkAccess()` function
 3. Update `use-nav.ts` to handle the new type
 

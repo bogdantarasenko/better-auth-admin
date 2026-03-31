@@ -7,8 +7,8 @@ This is a Next.js 16 + shadcn/ui admin dashboard starter kit.
 - **[AGENTS.md](./AGENTS.md)** — Full project overview, tech stack, structure, conventions, data fetching patterns, deployment
 - **[docs/forms.md](./docs/forms.md)** — Form system: TanStack Form + Zod, composable fields, validation, multi-step, sheet/dialog forms
 - **[docs/themes.md](./docs/themes.md)** — Theme system: OKLCH colors, adding themes, font config
-- **[docs/nav-rbac.md](./docs/nav-rbac.md)** — Navigation RBAC: access control, Clerk integration
-- **[docs/clerk_setup.md](./docs/clerk_setup.md)** — Clerk auth setup: organizations, billing, environment variables
+- **[docs/nav-rbac.md](./docs/nav-rbac.md)** — Navigation RBAC: access control, better-auth integration
+- **[docs/auth_setup.md](./docs/auth_setup.md)** — better-auth setup: organizations, Stripe billing, environment variables
 
 ## Critical Conventions
 

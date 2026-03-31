@@ -165,7 +165,7 @@
         "No runtime errors on sign-in, sign-up, dashboard, org switching, billing, profile pages"
       ],
       "priority": 10,
-      "passes": false
+      "passes": true
     }
   ]
 }

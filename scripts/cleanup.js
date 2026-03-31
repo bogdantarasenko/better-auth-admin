@@ -16,7 +16,7 @@ const ROOT = process.cwd();
 // ─── Templates (inline) ────────────────────────────────────────────
 
 const TEMPLATES = {
-  clerk: {
+  auth: {
     'src/app/page.tsx': `import { redirect } from 'next/navigation';
 
 export default async function Page() {
@@ -407,8 +407,8 @@ export default function StatsError({ error, reset }: StatsErrorProps) {
 // ─── Feature Configuration ──────────────────────────────────────────
 
 const FEATURES = {
-  clerk: {
-    name: 'Clerk (Authentication, Organizations, Billing)',
+  auth: {
+    name: 'Authentication (better-auth, Organizations, Stripe Billing)',
     folders: [
       'src/app/auth',
       'src/app/dashboard/workspaces',
@@ -419,21 +419,24 @@ const FEATURES = {
       'src/features/profile'
     ],
     files: [
-      'docs/clerk_setup.md',
+      'docs/auth_setup.md',
       'src/components/org-switcher.tsx',
-      'src/components/user-avatar-profile.tsx'
+      'src/components/user-avatar-profile.tsx',
+      'src/lib/auth.ts',
+      'src/lib/auth-client.ts',
+      'src/lib/auth-schema.ts',
+      'src/lib/db.ts'
     ],
-    dependencies: ['@clerk/nextjs', '@clerk/themes'],
+    dependencies: ['better-auth', '@better-auth/stripe', '@daveyplate/better-auth-ui', 'drizzle-orm', 'better-sqlite3', 'stripe'],
     envVars: [
-      'NEXTAUTH_SECRET',
-      'NEXTAUTH_URL',
-      'NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY',
-      'CLERK_SECRET_KEY',
-      'NEXT_PUBLIC_CLERK_SIGN_IN_URL',
-      'NEXT_PUBLIC_CLERK_SIGN_UP_URL',
-      'NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL',
-      'NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL',
-      'WEBHOOK_SECRET'
+      'BETTER_AUTH_SECRET',
+      'BETTER_AUTH_URL',
+      'DATABASE_PATH',
+      'STRIPE_SECRET_KEY',
+      'STRIPE_WEBHOOK_SECRET',
+      'STRIPE_FREE_PRICE_ID',
+      'STRIPE_PRO_PRICE_ID',
+      'STRIPE_PRO_ANNUAL_PRICE_ID'
     ],
     cleanNextConfig: true,
     navItemsToRemove: [
@@ -443,23 +446,8 @@ const FEATURES = {
       '/dashboard/profile',
       '/dashboard/exclusive'
     ],
-    templates: TEMPLATES.clerk,
-    replacements: {
-      'src/proxy.ts': `import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-
-export function proxy(_req: NextRequest) {
-  return NextResponse.next();
-}
-
-export const config = {
-  matcher: [
-    '/((?!_next|[^?]*\\\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    '/(api|trpc)(.*)'
-  ]
-};
-`
-    }
+    templates: TEMPLATES.auth,
+    replacements: {}
   },
   kanban: {
     name: 'Kanban (Drag & Drop task board)',
@@ -749,18 +737,14 @@ class FeatureCleanup {
     const before = content;
     // Remove Clerk image hostname entries (handles both comma-first and comma-after patterns)
     content = content.replace(
-      /,?\s*\{\s*protocol:\s*['"]https['"],\s*hostname:\s*['"]img\.clerk\.com['"][^}]*\},?/g,
-      ''
-    );
-    content = content.replace(
-      /,?\s*\{\s*protocol:\s*['"]https['"],\s*hostname:\s*['"]clerk\.com['"][^}]*\},?/g,
+      /,?\s*\{\s*protocol:\s*['"]https['"],\s*hostname:\s*['"]api\.slingacademy\.com['"][^}]*\},?/g,
       ''
     );
     // Clean up any trailing comma before closing bracket
     content = content.replace(/,(\s*\])/g, '$1');
     if (content !== before) {
       if (!this.dryRun) fs.writeFileSync(configPath, content, 'utf8');
-      this.log('✅ Cleaned next.config.ts (removed Clerk image hostnames)');
+      this.log('✅ Cleaned next.config.ts (removed image hostnames)');
     }
   }
 
@@ -874,7 +858,7 @@ class FeatureCleanup {
   }
 
   cleanDocReferences(feature) {
-    if (!feature.name.toLowerCase().includes('clerk')) return;
+    if (!feature.name.toLowerCase().includes('auth')) return;
 
     const docFiles = [
       path.join(ROOT, 'README.md'),
@@ -886,9 +870,8 @@ class FeatureCleanup {
       if (!fs.existsSync(filePath)) continue;
       let content = fs.readFileSync(filePath, 'utf8');
       const before = content;
-      content = content.replace(/\n*# Clerk Setup Guide[\s\S]*?(?=\n#|\n##|$)/gi, '\n');
-      content = content.replace(/Clerk['\s]/gi, 'Auth ');
-      content = content.replace(/clerk\.com[^\s]*/gi, '');
+      content = content.replace(/\n*# Better Auth Setup Guide[\s\S]*?(?=\n#|\n##|$)/gi, '\n');
+      content = content.replace(/better-auth['\s]/gi, 'Auth ');
       if (content !== before) {
         if (!this.dryRun) {
           fs.writeFileSync(filePath, content.replace(/\n\s*\n\s*\n/g, '\n\n'), 'utf8');

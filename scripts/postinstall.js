@@ -60,7 +60,7 @@ const msg = [
   row(),
   row(`${c.d}Available modules:${c.r}`),
   row(
-    `  ${c.cyan}clerk${c.d} · ${c.cyan}kanban${c.d} · ${c.cyan}chat${c.d} · ${c.cyan}notifications${c.d} · ${c.cyan}themes${c.d} · ${c.cyan}sentry${c.r}`
+    `  ${c.cyan}auth${c.d} · ${c.cyan}kanban${c.d} · ${c.cyan}chat${c.d} · ${c.cyan}notifications${c.d} · ${c.cyan}themes${c.d} · ${c.cyan}sentry${c.r}`
   ),
   row(),
   div,
