@@ -14,6 +14,8 @@
 - Middleware route protection: `getSessionCookie(req)` from `better-auth/cookies` — lightweight cookie check, no DB hit
 - Organization plugin: server `import { organization } from 'better-auth/plugins'`, client `import { organizationClient } from 'better-auth/client/plugins'`
 - better-auth-ui org components: `OrganizationSwitcher`, `OrganizationsCard`, `OrganizationSettingsCards`, `OrganizationMembersCard` from `@daveyplate/better-auth-ui`
+- better-auth org plugin React hooks: `authClient.useActiveOrganization()`, `authClient.useActiveMember()`, `authClient.useActiveMemberRole()` — atom names with `use` prefix and capitalized
+- RBAC pattern: no `<Protect>` component — use conditional rendering with `useActiveOrganization()` / `useActiveMember()` data
 
 ---
 
@@ -110,4 +112,18 @@
   - Schema regeneration after adding plugins: `echo "y" | npx @better-auth/cli@latest generate --config ./src/lib/auth.ts --output ./src/lib/auth-schema.ts` then `npx drizzle-kit push`
   - Organization tables created: organization, member, invitation; session table gets `activeOrganizationId` column
   - Clerk imports remain in `use-nav.ts` — that's for US-007 (RBAC)
+---
+
+## 2026-03-31 - US-007
+- What was implemented: Replaced Clerk RBAC hooks in use-nav.ts with better-auth equivalents, replaced Clerk's `<Protect>` in exclusive page with better-auth organization check
+- Files changed:
+  - `src/hooks/use-nav.ts` — Replaced `useOrganization()`/`useUser()` from `@clerk/nextjs` with `authClient.useActiveOrganization()`, `authClient.useSession()`, `authClient.useActiveMember()` from better-auth. Extracted shared `checkAccess()` helper to reduce duplication.
+  - `src/app/dashboard/exclusive/page.tsx` — Replaced `useOrganization()` and `<Protect plan='pro'>` from `@clerk/nextjs` with `authClient.useActiveOrganization()`. Plan check is placeholder until US-008 (Stripe billing).
+- **Learnings for future iterations:**
+  - better-auth organization plugin atoms become React hooks via `use${Capitalize<atomName>}`: `activeOrganization` → `useActiveOrganization`, `activeMember` → `useActiveMember`, `activeMemberRole` → `useActiveMemberRole`
+  - `useActiveMember()` returns `{ data: { id, organizationId, userId, role, createdAt } | null }` — use `data.role` for role checks
+  - `useActiveOrganization()` returns `{ data: { id, name, slug, members, invitations } | null, isPending }`
+  - better-auth doesn't have Clerk's `<Protect>` component — use conditional rendering with session/org data instead
+  - Permission checks: better-auth uses `checkRolePermission()` with resource/action statements, not Clerk-style string permissions like `org:teams:manage`. For simple cases, role-based checks (owner/admin) suffice.
+  - Clerk imports now only remain in: billing page, profile page, proxy.ts — handled by US-008, US-009, US-010
 ---

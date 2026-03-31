@@ -96,8 +96,7 @@
         "Typecheck passes"
       ],
       "priority": 6,
-      "passes": true,
-      "inProgress": true
+      "passes": true
     },
     {
       "id": "US-007",
@@ -116,7 +115,7 @@
         "Typecheck passes"
       ],
       "priority": 7,
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-008",
