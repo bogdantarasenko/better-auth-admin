@@ -153,3 +153,14 @@
   - `subscription.list({ query: { referenceId: orgId } })` to get org-level subscriptions
   - Clerk imports now only remain in: proxy.ts — handled by US-010
 ---
+
+## 2026-03-31 - US-009
+- What was implemented: Replaced Clerk's UserProfile component with better-auth-ui AccountSettingsCards and SecuritySettingsCards on the profile page
+- Files changed:
+  - `src/features/profile/components/profile-view-page.tsx` — Replaced `<UserProfile />` from `@clerk/nextjs` with `<AccountSettingsCards />` and `<SecuritySettingsCards />` from `@daveyplate/better-auth-ui`. Added `'use client'` directive since these are client components.
+- **Learnings for future iterations:**
+  - better-auth-ui profile components: `AccountSettingsCards` (name, avatar, email) and `SecuritySettingsCards` (password change, sessions) — both from `@daveyplate/better-auth-ui`
+  - These components require `'use client'` directive and work within the AuthUIProvider context (set up in US-002)
+  - The profile page was the simplest replacement — Clerk's `<UserProfile>` maps directly to two better-auth-ui card components
+  - `features/profile/utils/form-schema.ts` exists with a custom Zod schema but is unused by the current profile page — left as-is
+---
