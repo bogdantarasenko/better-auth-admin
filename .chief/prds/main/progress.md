@@ -16,6 +16,9 @@
 - better-auth-ui org components: `OrganizationSwitcher`, `OrganizationsCard`, `OrganizationSettingsCards`, `OrganizationMembersCard` from `@daveyplate/better-auth-ui`
 - better-auth org plugin React hooks: `authClient.useActiveOrganization()`, `authClient.useActiveMember()`, `authClient.useActiveMemberRole()` — atom names with `use` prefix and capitalized
 - RBAC pattern: no `<Protect>` component — use conditional rendering with `useActiveOrganization()` / `useActiveMember()` data
+- Stripe plugin: `@better-auth/stripe` (server) / `@better-auth/stripe/client` (client) — separate package from better-auth core
+- Stripe client needs fallback for CLI: `new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder')`
+- Subscription check pattern: `authClient.subscription.list({ query: { referenceId: orgId } })` then filter by status/plan
 
 ---
 
@@ -126,4 +129,27 @@
   - better-auth doesn't have Clerk's `<Protect>` component — use conditional rendering with session/org data instead
   - Permission checks: better-auth uses `checkRolePermission()` with resource/action statements, not Clerk-style string permissions like `org:teams:manage`. For simple cases, role-based checks (owner/admin) suffice.
   - Clerk imports now only remain in: billing page, profile page, proxy.ts — handled by US-008, US-009, US-010
+---
+
+## 2026-03-31 - US-008
+- What was implemented: Added @better-auth/stripe plugin with Stripe billing integration, rebuilt billing page with custom shadcn UI showing plans and subscription management, updated exclusive page with actual subscription check
+- Files changed:
+  - `package.json` / `package-lock.json` — added `@better-auth/stripe` and `stripe`
+  - `src/lib/auth.ts` — Added `stripe()` plugin with Stripe client, webhook secret, and subscription plans (free/pro)
+  - `src/lib/auth-client.ts` — Added `stripeClient({ subscription: true })` plugin
+  - `src/lib/auth-schema.ts` — Regenerated with subscription table
+  - `src/app/dashboard/billing/page.tsx` — Rebuilt with custom shadcn UI: plan cards, subscription status, upgrade/cancel/portal actions (replaces Clerk's PricingTable)
+  - `src/app/dashboard/exclusive/page.tsx` — Updated plan check to use `authClient.subscription.list()` for actual pro plan verification
+  - `src/hooks/use-nav.ts` — Updated plan/feature check comment (nav items shown, pages enforce access)
+  - `env.example.txt` — Added STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, STRIPE_FREE_PRICE_ID, STRIPE_PRO_PRICE_ID, STRIPE_PRO_ANNUAL_PRICE_ID
+- **Learnings for future iterations:**
+  - `@better-auth/stripe` is a separate package, not built into better-auth core
+  - Stripe client import: `import { stripe } from '@better-auth/stripe'` (server), `import { stripeClient } from '@better-auth/stripe/client'` (client)
+  - `stripeClient({ subscription: true })` enables subscription hooks on client
+  - Client methods: `authClient.subscription.upgrade()`, `.list()`, `.cancel()`, `.billingPortal()`
+  - Stripe client constructor needs a fallback for CLI schema generation: `new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder')` — otherwise CLI fails with "no apiKey"
+  - Webhook endpoint is auto-configured at `/api/auth/stripe/webhook` by the plugin
+  - Subscription plans defined in server config with `name`, `priceId`, `annualDiscountPriceId`, `limits`
+  - `subscription.list({ query: { referenceId: orgId } })` to get org-level subscriptions
+  - Clerk imports now only remain in: proxy.ts — handled by US-010
 ---

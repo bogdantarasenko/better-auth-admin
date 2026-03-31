@@ -98,14 +98,8 @@ function checkAccess(item: NavItem, ctx: AccessContext): boolean {
     }
   }
 
-  // Plan/feature checks require stripe plugin (US-008)
-  // For now, show items and let page-level protection handle it
-  if (item.access.plan || item.access.feature) {
-    console.warn(
-      `Plan/feature checks for navigation items require server-side verification. ` +
-        `Item "${item.title}" will be shown, but page-level protection should be implemented.`
-    );
-  }
+  // Plan/feature checks are handled at page level via subscription.list()
+  // Navigation items are shown, but pages enforce access with actual subscription data
 
   return true;
 }

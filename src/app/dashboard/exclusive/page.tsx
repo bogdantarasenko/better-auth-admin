@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import PageContainer from '@/components/layout/page-container';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { authClient } from '@/lib/auth-client';
@@ -9,13 +10,37 @@ import Link from 'next/link';
 
 export default function ExclusivePage() {
   const { data: activeOrg, isPending } = authClient.useActiveOrganization();
+  const [hasPro, setHasPro] = useState(false);
+  const [checkingPlan, setCheckingPlan] = useState(true);
 
-  // Plan check placeholder — actual subscription check will use stripe plugin (US-008)
-  // For now, show exclusive content if user has an active organization
-  const hasPro = !!activeOrg;
+  useEffect(() => {
+    async function checkSubscription() {
+      if (!activeOrg) {
+        setHasPro(false);
+        setCheckingPlan(false);
+        return;
+      }
+      try {
+        const { data } = await authClient.subscription.list({
+          query: { referenceId: activeOrg.id }
+        });
+        const activeSub = (data || []).find(
+          (s: { status: string; plan: string }) =>
+            (s.status === 'active' || s.status === 'trialing') &&
+            s.plan === 'pro'
+        );
+        setHasPro(!!activeSub);
+      } catch {
+        setHasPro(false);
+      } finally {
+        setCheckingPlan(false);
+      }
+    }
+    void checkSubscription();
+  }, [activeOrg?.id]);
 
   return (
-    <PageContainer isLoading={isPending}>
+    <PageContainer isLoading={isPending || checkingPlan}>
       {!hasPro ? (
         <div className='flex h-full items-center justify-center'>
           <Alert>
@@ -43,7 +68,7 @@ export default function ExclusivePage() {
               Exclusive Area
             </h1>
             <p className='text-muted-foreground'>
-              Welcome, <span className='font-semibold'>{activeOrg.name}</span>! This page
+              Welcome, <span className='font-semibold'>{activeOrg?.name}</span>! This page
               contains exclusive features for Pro plan organizations.
             </p>
           </div>
