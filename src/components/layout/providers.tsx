@@ -26,6 +26,7 @@ export default function Providers({
           onSessionChange={() => {
             router.refresh();
           }}
+          redirectTo='/dashboard/overview'
           Link={Link}
         >
           <QueryProvider>{children}</QueryProvider>
