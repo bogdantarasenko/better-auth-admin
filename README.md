@@ -4,6 +4,12 @@
 
 <br />
 
+<div align="center">
+  <img src="/public/shadcn-dashboard.png" alt="Better Auth Admin Dashboard" style="max-width: 100%; border-radius: 8px;" />
+</div>
+
+<br />
+
 <p align="center">
   <img src="https://img.shields.io/badge/Next.js-16-black" alt="Next.js" />
   <img src="https://img.shields.io/badge/better--auth-1.5-blue" alt="better-auth" />
