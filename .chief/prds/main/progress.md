@@ -164,3 +164,28 @@
   - The profile page was the simplest replacement — Clerk's `<UserProfile>` maps directly to two better-auth-ui card components
   - `features/profile/utils/form-schema.ts` exists with a custom Zod schema but is unused by the current profile page — left as-is
 ---
+
+## 2026-03-31 - US-010
+- What was implemented: Removed all Clerk dependencies and cleaned up the entire codebase — uninstalled packages, deleted dead files, updated all docs and config references to better-auth
+- Files changed:
+  - `package.json` / `package-lock.json` — Uninstalled `@clerk/nextjs` and `@clerk/themes`
+  - `src/proxy.ts` — Deleted (old Clerk middleware, replaced by `middleware.ts` in US-004)
+  - `docs/clerk_setup.md` — Deleted
+  - `docs/auth_setup.md` — Created (better-auth setup guide)
+  - `docs/nav-rbac.md` — Updated all Clerk references to better-auth
+  - `AGENTS.md` — Updated auth stack, env vars, protected routes, cleanup script, external docs
+  - `CLAUDE.md` — Updated doc references
+  - `README.md` — Updated auth references, feature descriptions, page specs
+  - `env.example.txt` — Removed all Clerk env vars (NEXT_PUBLIC_CLERK_*, CLERK_SECRET_KEY, WEBHOOK_SECRET)
+  - `next.config.ts` — Removed `img.clerk.com` and `clerk.com` image hostnames
+  - `scripts/cleanup.js` — Renamed `clerk` feature to `auth`, updated dependencies/env vars/templates
+  - `scripts/postinstall.js` — Updated feature list display (`clerk` → `auth`)
+  - `src/config/infoconfig.ts` — Updated all Clerk references to better-auth/Stripe
+  - `src/app/about/page.tsx` — Updated auth section from Clerk to better-auth
+  - `src/app/privacy-policy/page.tsx` — Updated auth section from Clerk to better-auth
+  - `.gitignore` — Removed `/.clerk/` entry
+- **Learnings for future iterations:**
+  - When removing a dependency, check: package.json, source imports, env vars, next.config.ts image domains, docs, README, cleanup scripts, about/privacy pages, infoconfig, .gitignore
+  - The cleanup.js script has its own feature config with dependencies, env vars, templates, and cleanup logic — all need updating when the underlying auth system changes
+  - Skill files (.claude/skills, .agents/skills) also contain references but are external/generated — updating them is optional
+---

@@ -46,13 +46,11 @@ import {
   IconInfoCircle,
   IconItalic,
   IconLayoutDashboard,
-  IconLayoutKanban,
   IconLayoutSidebar,
   IconLoader2,
   IconLock,
   IconLogin,
   IconLogout,
-  IconMessage,
   IconMinus,
   IconMoon,
   IconMusic,
@@ -125,7 +123,6 @@ export const Icons = {
 
   // Layout
   dashboard: IconLayoutDashboard,
-  kanban: IconLayoutKanban,
   panelLeft: IconLayoutSidebar,
 
   // User
@@ -143,7 +140,6 @@ export const Icons = {
   logo: IconCommand,
 
   // Communication
-  chat: IconMessage,
   notification: IconBell,
   phone: IconPhone,
   video: IconVideo,

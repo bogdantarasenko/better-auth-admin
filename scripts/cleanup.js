@@ -449,25 +449,6 @@ const FEATURES = {
     templates: TEMPLATES.auth,
     replacements: {}
   },
-  kanban: {
-    name: 'Kanban (Drag & Drop task board)',
-    folders: ['src/app/dashboard/kanban', 'src/features/kanban'],
-    files: ['src/components/ui/kanban.tsx'],
-    dependencies: [
-      '@dnd-kit/core',
-      '@dnd-kit/modifiers',
-      '@dnd-kit/sortable',
-      '@dnd-kit/utilities'
-    ],
-    navItemsToRemove: ['/dashboard/kanban']
-  },
-  chat: {
-    name: 'Chat (Messaging UI)',
-    folders: ['src/app/dashboard/chat', 'src/features/chat'],
-    files: ['src/components/ui/file-preview.tsx'],
-    dependencies: [],
-    navItemsToRemove: ['/dashboard/chat']
-  },
   notifications: {
     name: 'Notifications (Notification center & page)',
     folders: ['src/app/dashboard/notifications', 'src/features/notifications'],
@@ -1013,9 +994,9 @@ Usage:
 
 Examples:
   node scripts/cleanup.js clerk
-  node scripts/cleanup.js kanban chat       # remove multiple at once
+  node scripts/cleanup.js notifications       # remove multiple at once
   node scripts/cleanup.js --interactive     # interactive mode
-  node scripts/cleanup.js --dry-run kanban  # preview without changing files
+  node scripts/cleanup.js --dry-run notifications  # preview without changing files
   node scripts/cleanup.js --all             # remove all optional features
   node scripts/cleanup.js --list
   node scripts/cleanup.js --help

@@ -98,10 +98,7 @@ You can use this Next.js + Shadcn UI dashboard starter to build:
 | [Product List (Table)](https://shadcn-dashboard.kiranism.dev/dashboard/product)                                                                                        | TanStack Table + React Query (server prefetch + client cache) with nuqs URL state for search, filter, pagination. `shallow: true` keeps interactions client-side.                                                                                                       |
 | [Create Product Form](https://shadcn-dashboard.kiranism.dev/dashboard/product/new)                                                                                     | TanStack Form + Zod with `useMutation` for create/update. Cache invalidation on success.                                                                                                                                                                                |
 | [Users (Table)](https://shadcn-dashboard.kiranism.dev/dashboard/users)                                                                                                 | Users table with React Query + nuqs pattern. Same architecture as Products — server prefetch, client-side pagination/filter via React Query cache.                                                                                                                      |
-| [React Query Demo](https://shadcn-dashboard.kiranism.dev/dashboard/react-query)                                                                                        | Pokemon API showcase demonstrating server prefetch + `HydrationBoundary` + `useSuspenseQuery` pattern with client-side cache.                                                                                                                                           |
 | [Profile](https://shadcn-dashboard.kiranism.dev/dashboard/profile)                                                                                                     | Account management UI using better-auth-ui components that allows users to manage their profile and security settings                                                                                                                                                   |
-| [Kanban Board](https://shadcn-dashboard.kiranism.dev/dashboard/kanban)                                                                                                 | A Drag n Drop task management board with dnd-kit and zustand. Features column sorting, task cards with priority badges, assignees, and due dates.                                                                                                                       |
-| [Chat](https://shadcn-dashboard.kiranism.dev/dashboard/chat)                                                                                                           | Real-time messaging UI with conversation list, message bubbles, quick replies, file attachments, and auto-reply demo. Multi-panel layout with mobile responsive design.                                                                                                 |
 | [Notifications](https://shadcn-dashboard.kiranism.dev/dashboard/notifications)                                                                                         | Notification center with bell icon badge in header, popover preview, and dedicated full page with tabs (All/Unread/Read). Mark as read, mark all as read actions.                                                                                                       |
 | [Workspaces](https://shadcn-dashboard.kiranism.dev/dashboard/workspaces)                                                                                               | Organization management page using better-auth-ui `<OrganizationsCard />` component. Users can view, create, and switch between organizations/workspaces.                                                                                                               |
 | [Team Management](https://shadcn-dashboard.kiranism.dev/dashboard/workspaces/team)                                                                                     | Full-featured team management interface using better-auth-ui `<OrganizationSettingsCards />`. Manage members, roles, security settings, and organization details. Requires an active organization.                                                                       |
@@ -120,9 +117,6 @@ src/
 │   │   ├── overview/              # Analytics with parallel routes
 │   │   ├── product/               # Product CRUD pages (React Query)
 │   │   ├── users/                 # Users table (React Query + nuqs)
-│   │   ├── react-query/           # React Query demo page
-│   │   ├── kanban/                # Task board page
-│   │   ├── chat/                  # Messaging page
 │   │   ├── notifications/         # Notifications page
 │   │   ├── workspaces/            # Org management & teams
 │   │   ├── billing/               # Billing & plans
@@ -131,7 +125,7 @@ src/
 │   └── api/                       # API routes
 │
 ├── components/                    # Shared components
-│   ├── ui/                        # UI primitives (buttons, inputs, kanban, etc.)
+│   ├── ui/                        # UI primitives (buttons, inputs, etc.)
 │   ├── layout/                    # Layout components (header, sidebar, etc.)
 │   ├── themes/                    # Theme system (selector, mode toggle, config)
 │   └── kbar/                      # Command+K interface
@@ -140,9 +134,6 @@ src/
 │   ├── overview/                  # Dashboard analytics (charts, cards)
 │   ├── products/                  # Product listing, form, tables (React Query)
 │   ├── users/                     # User management table (React Query)
-│   ├── react-query-demo/          # React Query demo (Pokemon API)
-│   ├── kanban/                    # Drag-drop task board
-│   ├── chat/                      # Messaging (conversations, bubbles, composer)
 │   ├── notifications/             # Notification center & store
 │   ├── auth/                      # Auth components
 │   └── profile/                   # Profile form schemas
@@ -190,13 +181,13 @@ You should now be able to access the application at http://localhost:3000.
 
 #### Cleanup
 
-To remove optional features you don't need (auth, kanban, chat, notifications, extra themes, sentry), run the cleanup script:
+To remove optional features you don't need (auth, notifications, extra themes, sentry), run the cleanup script:
 
 ```bash
 node scripts/cleanup.js --interactive   # interactive mode
 node scripts/cleanup.js --list          # see available features
-node scripts/cleanup.js --dry-run chat  # preview before removing
-node scripts/cleanup.js kanban chat     # remove specific features
+node scripts/cleanup.js --dry-run notifications  # preview before removing
+node scripts/cleanup.js notifications            # remove specific features
 ```
 
 Run `node scripts/cleanup.js --help` for all options. Delete `scripts/cleanup.js` when you're done.

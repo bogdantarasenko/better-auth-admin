@@ -39,7 +39,7 @@ The project follows a feature-based folder structure designed for scalability in
 
 ### State Management
 
-- Zustand 5.x for local UI state (chat, kanban, notifications)
+- Zustand 5.x for local UI state (notifications)
 - Nuqs for URL search params state management
 - TanStack Form + Zod for form handling (via `useAppForm` hook)
 
@@ -87,8 +87,6 @@ The project follows a feature-based folder structure designed for scalability in
 │   ├── dashboard/         # Dashboard routes
 │   │   ├── overview/      # Parallel routes (@area_stats, @bar_stats, etc.)
 │   │   ├── product/       # Product management pages
-│   │   ├── kanban/        # Kanban board page
-│   │   ├── chat/          # Messaging page
 │   │   ├── notifications/ # Notifications page
 │   │   ├── workspaces/    # Organization management
 │   │   ├── billing/       # Subscription billing
@@ -123,9 +121,6 @@ The project follows a feature-based folder structure designed for scalability in
 │   ├── users/             # User management (React Query + nuqs)
 │   │   ├── api/           # Same pattern: types.ts → service.ts → queries.ts
 │   │   └── components/    # Listing, table components
-│   ├── react-query-demo/  # React Query showcase (Pokemon API)
-│   ├── kanban/            # Kanban board with dnd-kit
-│   ├── chat/              # Messaging UI (conversations, bubbles, composer)
 │   ├── notifications/     # Notification center & store
 │   └── profile/           # Profile management
 │
@@ -585,17 +580,15 @@ node scripts/cleanup.js --interactive
 
 # Remove specific features
 node scripts/cleanup.js auth            # Remove auth/org/billing
-node scripts/cleanup.js kanban          # Remove kanban board
-node scripts/cleanup.js chat            # Remove messaging UI
 node scripts/cleanup.js notifications   # Remove notification center
 node scripts/cleanup.js themes          # Keep one theme, remove rest
 node scripts/cleanup.js sentry          # Remove error tracking
 
 # Remove multiple at once
-node scripts/cleanup.js kanban chat notifications
+node scripts/cleanup.js notifications
 
 # Preview without changing files
-node scripts/cleanup.js --dry-run kanban
+node scripts/cleanup.js --dry-run notifications
 
 # List all features
 node scripts/cleanup.js --list
@@ -648,9 +641,9 @@ export const Icons = {
 | --------------- | ----------------------------------------------------------------------------- |
 | General         | `check`, `close`, `search`, `settings`, `trash`, `spinner`, `info`, `warning` |
 | Navigation      | `chevronDown`, `chevronLeft`, `chevronRight`, `chevronUp`, `chevronsUpDown`   |
-| Layout          | `dashboard`, `kanban`, `panelLeft`                                            |
+| Layout          | `dashboard`, `panelLeft`                                                      |
 | User            | `user`, `account`, `profile`, `teams`                                         |
-| Communication   | `chat`, `notification`, `phone`, `video`, `send`                              |
+| Communication   | `notification`, `phone`, `video`, `send`                                      |
 | Files           | `page`, `post`, `media`, `fileTypePdf`, `fileTypeDoc`                         |
 | Actions         | `add`, `edit`, `upload`, `share`, `login`, `logout`                           |
 | Theme           | `sun`, `moon`, `brightness`, `laptop`, `palette`                              |
