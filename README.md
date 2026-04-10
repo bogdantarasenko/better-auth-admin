@@ -18,7 +18,7 @@
 
 ## Overview
 
-A production-ready **admin dashboard** built with **Next.js 16, better-auth, Shadcn UI, TypeScript, and Tailwind CSS**. Designed for **SaaS apps, internal tools, and admin panels** with self-hosted authentication, multi-tenant workspaces, and Stripe billing out of the box.
+A production-ready **admin dashboard** built with **Next.js 16, better-auth, Shadcn UI, TypeScript, and Tailwind CSS**. Designed for **SaaS apps, internal tools, and admin panels** with self-hosted authentication and multi-tenant workspaces out of the box.
 
 ### Tech Stack
 
@@ -26,7 +26,6 @@ A production-ready **admin dashboard** built with **Next.js 16, better-auth, Sha
 - Language - [TypeScript](https://www.typescriptlang.org)
 - Auth - [better-auth](https://www.better-auth.com) (self-hosted, SQLite via Drizzle)
 - Auth UI - [better-auth-ui](https://better-auth-ui.com/)
-- Billing - [Stripe](https://stripe.com) via [@better-auth/stripe](https://www.better-auth.com/docs/plugins/stripe)
 - Error tracking - [Sentry](https://sentry.io/for/nextjs/)
 - Styling - [Tailwind CSS v4](https://tailwindcss.com)
 - Components - [Shadcn-ui](https://ui.shadcn.com)
@@ -49,8 +48,7 @@ A production-ready **admin dashboard** built with **Next.js 16, better-auth, Sha
 - **Data tables** — React Query prefetch, client-side cache, search, filter & pagination
 - **Authentication** — self-hosted via better-auth with better-auth-ui components
 - **Multi-tenant workspaces** — organization plugin (create, switch, manage teams)
-- **Billing & subscriptions** — Stripe integration via @better-auth/stripe
-- **RBAC navigation** — client-side nav filtering by org, role, permission, plan
+- **RBAC navigation** — client-side nav filtering by org, role, permission
 - **Multi-theme support** — 10+ themes with easy switching
 - **Feature-based folder structure** — scalable project organization
 - **Command+K** — global search and navigation via kbar
@@ -67,7 +65,7 @@ A production-ready **admin dashboard** built with **Next.js 16, better-auth, Sha
 | Profile | Account management via better-auth-ui components |
 | Workspaces | Organization management via better-auth-ui `<OrganizationsCard />` |
 | Team Management | Member/role management via better-auth-ui `<OrganizationSettingsCards />` |
-| Billing & Plans | Subscription management via Stripe |
+| Users Info | Organization members overview |
 | Not Found | Custom 404 page |
 
 ## Project Structure
@@ -81,7 +79,7 @@ src/
 │   │   ├── product/               # Product CRUD pages
 │   │   ├── users/                 # Users table
 │   │   ├── workspaces/            # Org management & teams
-│   │   ├── billing/               # Billing & plans
+│   │   ├── billing/               # Users info
 │   │   └── profile/               # User profile
 │   └── api/                       # API routes
 │
@@ -139,16 +137,6 @@ The app will be available at http://localhost:3000.
 BETTER_AUTH_SECRET=    # Generate with: openssl rand -base64 32
 BETTER_AUTH_URL=http://localhost:3000
 DATABASE_PATH=./sqlite.db
-```
-
-**Optional — Stripe Billing**
-
-```env
-STRIPE_SECRET_KEY=
-STRIPE_WEBHOOK_SECRET=
-STRIPE_FREE_PRICE_ID=
-STRIPE_PRO_PRICE_ID=
-STRIPE_PRO_ANNUAL_PRICE_ID=
 ```
 
 **Optional — Sentry Error Tracking**

@@ -37,22 +37,6 @@ Multi-tenant workspace management with roles: `owner`, `admin`, `member`.
 - Organization members can be invited and managed
 - Role-based access control for navigation and pages
 
-### Stripe Billing
-
-Organization-level subscription management via `@better-auth/stripe`.
-
-```env
-STRIPE_SECRET_KEY=    # Stripe API secret key
-STRIPE_WEBHOOK_SECRET=    # Stripe webhook secret
-STRIPE_FREE_PRICE_ID=    # Price ID for free plan
-STRIPE_PRO_PRICE_ID=    # Price ID for pro plan
-STRIPE_PRO_ANNUAL_PRICE_ID=    # Price ID for pro annual plan
-```
-
-- Webhook endpoint is auto-configured at `/api/auth/stripe/webhook`
-- Plans defined in `src/lib/auth.ts` (free/pro tiers)
-- Subscription status used for RBAC plan checks
-
 ## Auth UI Components
 
 This project uses `@daveyplate/better-auth-ui` for pre-built auth components:

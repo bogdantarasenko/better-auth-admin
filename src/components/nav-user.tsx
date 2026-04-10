@@ -82,8 +82,8 @@ export function NavUser({
                 Account
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <Icons.creditCard className='mr-2 h-4 w-4' />
-                Billing
+                <Icons.teams className='mr-2 h-4 w-4' />
+                Users Info
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

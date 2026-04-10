@@ -408,7 +408,7 @@ export default function StatsError({ error, reset }: StatsErrorProps) {
 
 const FEATURES = {
   auth: {
-    name: 'Authentication (better-auth, Organizations, Stripe Billing)',
+    name: 'Authentication (better-auth, Organizations)',
     folders: [
       'src/app/auth',
       'src/app/dashboard/workspaces',
@@ -427,16 +427,11 @@ const FEATURES = {
       'src/lib/auth-schema.ts',
       'src/lib/db.ts'
     ],
-    dependencies: ['better-auth', '@better-auth/stripe', '@daveyplate/better-auth-ui', 'drizzle-orm', 'better-sqlite3', 'stripe'],
+    dependencies: ['better-auth', '@daveyplate/better-auth-ui', 'drizzle-orm', 'better-sqlite3'],
     envVars: [
       'BETTER_AUTH_SECRET',
       'BETTER_AUTH_URL',
-      'DATABASE_PATH',
-      'STRIPE_SECRET_KEY',
-      'STRIPE_WEBHOOK_SECRET',
-      'STRIPE_FREE_PRICE_ID',
-      'STRIPE_PRO_PRICE_ID',
-      'STRIPE_PRO_ANNUAL_PRICE_ID'
+      'DATABASE_PATH'
     ],
     cleanNextConfig: true,
     navItemsToRemove: [

@@ -98,54 +98,31 @@ export const teamInfoContent: InfobarContent = {
   ]
 };
 
-export const billingInfoContent: InfobarContent = {
-  title: 'Billing & Plans',
+export const usersInfoContent: InfobarContent = {
+  title: 'Users Info',
   sections: [
     {
       title: 'Overview',
       description:
-        "The Billing page allows you to manage your organization's subscription and usage limits. Plans and subscriptions are managed through the @better-auth/stripe plugin, which provides organization-level subscription management with Stripe payment processing.",
+        'The Users Info page displays all members registered in your current organization. You can see member roles, email verification status, and when they joined.',
       links: [
         {
-          title: 'Stripe Documentation',
-          url: 'https://stripe.com/docs'
+          title: 'better-auth Organization Plugin',
+          url: 'https://www.better-auth.com/docs/plugins/organization'
         }
       ]
     },
     {
-      title: 'Available Plans',
+      title: 'Member Roles',
       description:
-        'View and subscribe to available plans. Plans are defined in the server config (src/lib/auth.ts). Common plans include free and pro tiers with monthly and annual billing options.',
+        'Each member has a role within the organization: owner, admin, or member. Roles determine what actions a user can perform within the workspace.',
       links: []
     },
     {
-      title: 'Plan Features',
+      title: 'Summary',
       description:
-        'Each plan can include specific features that unlock functionality in the application. Subscription status is checked client-side via authClient.subscription.list() and used for access control.',
+        'The summary cards show the total number of members, your current role, and the active organization name.',
       links: []
-    },
-    {
-      title: 'Access Control',
-      description:
-        'Plans and features are used for access control throughout the application. Subscription status is checked to verify plan access. Client-side conditional rendering shows or hides content based on subscription status.',
-      links: []
-    },
-    {
-      title: 'Stripe Integration',
-      description:
-        'Billing is powered by Stripe via the @better-auth/stripe plugin. Stripe handles all payment processing. The webhook endpoint is auto-configured at /api/auth/stripe/webhook.',
-      links: []
-    },
-    {
-      title: 'Setup Requirements',
-      description:
-        'To enable billing, configure Stripe environment variables (STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, and price IDs) in your .env file. Create products and prices in the Stripe Dashboard.',
-      links: [
-        {
-          title: 'Stripe Dashboard',
-          url: 'https://dashboard.stripe.com'
-        }
-      ]
     }
   ]
 };

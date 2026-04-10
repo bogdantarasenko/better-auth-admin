@@ -144,8 +144,8 @@ export default function AppSidebar() {
                     Profile
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => router.push('/dashboard/billing')}>
-                    <Icons.creditCard className='mr-2 h-4 w-4' />
-                    Billing
+                    <Icons.teams className='mr-2 h-4 w-4' />
+                    Users Info
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />

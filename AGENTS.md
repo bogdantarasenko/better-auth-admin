@@ -12,7 +12,7 @@ This file provides essential information for AI coding agents working on this pr
 - **Language**: TypeScript 5.7
 - **Styling**: Tailwind CSS v4
 - **UI Components**: shadcn/ui (New York style)
-- **Authentication**: better-auth (with Organizations/Stripe Billing)
+- **Authentication**: better-auth (with Organizations)
 - **Error Tracking**: Sentry
 - **Charts**: Recharts
 - **Containerization**: Docker (Node.js & Bun Dockerfiles)
@@ -55,7 +55,6 @@ The project follows a feature-based folder structure designed for scalability in
 
 - better-auth for authentication and user management (self-hosted, SQLite via Drizzle)
 - better-auth organization plugin for multi-tenant workspaces
-- @better-auth/stripe for subscription management
 - better-auth-ui components for auth pages, profile, and org management
 - Client-side RBAC for navigation visibility
 
@@ -212,16 +211,6 @@ NEXT_PUBLIC_SENTRY_ORG=your-org
 NEXT_PUBLIC_SENTRY_PROJECT=your-project
 SENTRY_AUTH_TOKEN=sntrys_...
 NEXT_PUBLIC_SENTRY_DISABLED="false"  # Set to "true" to disable in dev
-```
-
-### Optional for Stripe Billing
-
-```env
-STRIPE_SECRET_KEY=    # Stripe API secret key
-STRIPE_WEBHOOK_SECRET=    # Stripe webhook secret
-STRIPE_FREE_PRICE_ID=    # Price ID for free plan
-STRIPE_PRO_PRICE_ID=    # Price ID for pro plan
-STRIPE_PRO_ANNUAL_PRICE_ID=    # Price ID for pro annual plan
 ```
 
 ---
@@ -550,7 +539,6 @@ Ensure these are set in your deployment platform:
 - `BETTER_AUTH_SECRET`
 - `BETTER_AUTH_URL`
 - `DATABASE_PATH`
-- `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` (if using billing)
 - `SENTRY_*` variables if using error tracking
 
 ### Docker
