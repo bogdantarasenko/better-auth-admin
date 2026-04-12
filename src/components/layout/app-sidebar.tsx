@@ -32,8 +32,16 @@ import { authClient } from '@/lib/auth-client';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import * as React from 'react';
+import { authFeatures } from '@/config/auth-features';
+import dynamic from 'next/dynamic';
 import { Icons } from '../icons';
-import { OrgSwitcher } from '../org-switcher';
+
+const OrgSwitcher = dynamic(
+  () => import('../org-switcher').then((m) => ({ default: m.OrgSwitcher })),
+  {
+    ssr: false
+  }
+);
 
 export default function AppSidebar() {
   const pathname = usePathname();
@@ -50,7 +58,7 @@ export default function AppSidebar() {
   return (
     <Sidebar collapsible='icon'>
       <SidebarHeader className='group-data-[collapsible=icon]:pt-4'>
-        <OrgSwitcher />
+        {authFeatures.organizations && <OrgSwitcher />}
       </SidebarHeader>
       <SidebarContent className='overflow-x-hidden'>
         {filteredGroups.map((group) => (
@@ -142,10 +150,6 @@ export default function AppSidebar() {
                   <DropdownMenuItem onClick={() => router.push('/dashboard/profile')}>
                     <Icons.account className='mr-2 h-4 w-4' />
                     Profile
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => router.push('/dashboard/billing')}>
-                    <Icons.teams className='mr-2 h-4 w-4' />
-                    Users Info
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />

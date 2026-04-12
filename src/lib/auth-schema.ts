@@ -1,105 +1,98 @@
-import { relations, sql } from 'drizzle-orm';
-import { sqliteTable, text, integer, index, uniqueIndex } from 'drizzle-orm/sqlite-core';
+import { relations } from 'drizzle-orm';
+import { pgTable, text, timestamp, boolean, index, uniqueIndex } from 'drizzle-orm/pg-core';
 
-export const user = sqliteTable('user', {
+export const user = pgTable('user', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
   email: text('email').notNull().unique(),
-  emailVerified: integer('email_verified', { mode: 'boolean' }).default(false).notNull(),
+  emailVerified: boolean('emailVerified').default(false).notNull(),
   image: text('image'),
-  createdAt: integer('created_at', { mode: 'timestamp_ms' })
-    .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
-    .notNull(),
-  updatedAt: integer('updated_at', { mode: 'timestamp_ms' })
-    .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  updatedAt: timestamp('updatedAt')
+    .defaultNow()
     .$onUpdate(() => /* @__PURE__ */ new Date())
-    .notNull()
+    .notNull(),
+  role: text('role'),
+  banned: boolean('banned').default(false),
+  banReason: text('banReason'),
+  banExpires: timestamp('banExpires')
 });
 
-export const session = sqliteTable(
+export const session = pgTable(
   'session',
   {
     id: text('id').primaryKey(),
-    expiresAt: integer('expires_at', { mode: 'timestamp_ms' }).notNull(),
+    expiresAt: timestamp('expiresAt').notNull(),
     token: text('token').notNull().unique(),
-    createdAt: integer('created_at', { mode: 'timestamp_ms' })
-      .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
-      .notNull(),
-    updatedAt: integer('updated_at', { mode: 'timestamp_ms' })
+    createdAt: timestamp('createdAt').defaultNow().notNull(),
+    updatedAt: timestamp('updatedAt')
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull(),
-    ipAddress: text('ip_address'),
-    userAgent: text('user_agent'),
-    userId: text('user_id')
+    ipAddress: text('ipAddress'),
+    userAgent: text('userAgent'),
+    userId: text('userId')
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
-    activeOrganizationId: text('active_organization_id')
+    impersonatedBy: text('impersonatedBy'),
+    activeOrganizationId: text('activeOrganizationId')
   },
   (table) => [index('session_userId_idx').on(table.userId)]
 );
 
-export const account = sqliteTable(
+export const account = pgTable(
   'account',
   {
     id: text('id').primaryKey(),
-    accountId: text('account_id').notNull(),
-    providerId: text('provider_id').notNull(),
-    userId: text('user_id')
+    accountId: text('accountId').notNull(),
+    providerId: text('providerId').notNull(),
+    userId: text('userId')
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
-    accessToken: text('access_token'),
-    refreshToken: text('refresh_token'),
-    idToken: text('id_token'),
-    accessTokenExpiresAt: integer('access_token_expires_at', {
-      mode: 'timestamp_ms'
-    }),
-    refreshTokenExpiresAt: integer('refresh_token_expires_at', {
-      mode: 'timestamp_ms'
-    }),
+    accessToken: text('accessToken'),
+    refreshToken: text('refreshToken'),
+    idToken: text('idToken'),
+    accessTokenExpiresAt: timestamp('accessTokenExpiresAt'),
+    refreshTokenExpiresAt: timestamp('refreshTokenExpiresAt'),
     scope: text('scope'),
     password: text('password'),
-    createdAt: integer('created_at', { mode: 'timestamp_ms' })
-      .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
-      .notNull(),
-    updatedAt: integer('updated_at', { mode: 'timestamp_ms' })
+    createdAt: timestamp('createdAt').defaultNow().notNull(),
+    updatedAt: timestamp('updatedAt')
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull()
   },
   (table) => [index('account_userId_idx').on(table.userId)]
 );
 
-export const verification = sqliteTable(
+export const verification = pgTable(
   'verification',
   {
     id: text('id').primaryKey(),
     identifier: text('identifier').notNull(),
     value: text('value').notNull(),
-    expiresAt: integer('expires_at', { mode: 'timestamp_ms' }).notNull(),
-    createdAt: integer('created_at', { mode: 'timestamp_ms' })
-      .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
-      .notNull(),
-    updatedAt: integer('updated_at', { mode: 'timestamp_ms' })
-      .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+    expiresAt: timestamp('expiresAt').notNull(),
+    createdAt: timestamp('createdAt').defaultNow().notNull(),
+    updatedAt: timestamp('updatedAt')
+      .defaultNow()
       .$onUpdate(() => /* @__PURE__ */ new Date())
       .notNull()
   },
   (table) => [index('verification_identifier_idx').on(table.identifier)]
 );
 
-export const organization = sqliteTable(
+export const organization = pgTable(
   'organization',
   {
     id: text('id').primaryKey(),
     name: text('name').notNull(),
     slug: text('slug').notNull().unique(),
     logo: text('logo'),
-    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+    createdAt: timestamp('created_at').notNull(),
     metadata: text('metadata')
   },
   (table) => [uniqueIndex('organization_slug_uidx').on(table.slug)]
 );
 
-export const member = sqliteTable(
+export const member = pgTable(
   'member',
   {
     id: text('id').primaryKey(),
@@ -110,7 +103,7 @@ export const member = sqliteTable(
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
     role: text('role').default('member').notNull(),
-    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull()
+    createdAt: timestamp('created_at').notNull()
   },
   (table) => [
     index('member_organizationId_idx').on(table.organizationId),
@@ -118,7 +111,7 @@ export const member = sqliteTable(
   ]
 );
 
-export const invitation = sqliteTable(
+export const invitation = pgTable(
   'invitation',
   {
     id: text('id').primaryKey(),
@@ -128,10 +121,8 @@ export const invitation = sqliteTable(
     email: text('email').notNull(),
     role: text('role'),
     status: text('status').default('pending').notNull(),
-    expiresAt: integer('expires_at', { mode: 'timestamp_ms' }).notNull(),
-    createdAt: integer('created_at', { mode: 'timestamp_ms' })
-      .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
-      .notNull(),
+    expiresAt: timestamp('expires_at').notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
     inviterId: text('inviter_id')
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' })

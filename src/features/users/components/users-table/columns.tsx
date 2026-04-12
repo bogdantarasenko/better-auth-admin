@@ -10,15 +10,13 @@ import { ROLE_OPTIONS } from './options';
 export const columns: ColumnDef<User>[] = [
   {
     id: 'name',
-    accessorFn: (row) => `${row.first_name} ${row.last_name}`,
+    accessorKey: 'name',
     header: ({ column }: { column: Column<User, unknown> }) => (
       <DataTableColumnHeader column={column} title='Name' />
     ),
     cell: ({ row }) => (
       <div className='flex flex-col'>
-        <span className='font-medium'>
-          {row.original.first_name} {row.original.last_name}
-        </span>
+        <span className='font-medium'>{row.original.name}</span>
         <span className='text-muted-foreground text-xs'>{row.original.email}</span>
       </div>
     ),
@@ -31,10 +29,6 @@ export const columns: ColumnDef<User>[] = [
     enableColumnFilter: true
   },
   {
-    accessorKey: 'phone',
-    header: 'PHONE'
-  },
-  {
     id: 'role',
     accessorKey: 'role',
     enableSorting: false,
@@ -42,9 +36,10 @@ export const columns: ColumnDef<User>[] = [
       <DataTableColumnHeader column={column} title='Role' />
     ),
     cell: ({ cell }) => {
+      const role = cell.getValue<string>() ?? 'user';
       return (
         <Badge variant='outline' className='capitalize'>
-          {cell.getValue<User['role']>()}
+          {role}
         </Badge>
       );
     },
@@ -56,13 +51,25 @@ export const columns: ColumnDef<User>[] = [
     }
   },
   {
-    accessorKey: 'status',
+    id: 'status',
+    accessorKey: 'banned',
     header: 'STATUS',
+    cell: ({ row }) => {
+      const banned = row.original.banned;
+      return (
+        <Badge variant={banned ? 'destructive' : 'default'}>{banned ? 'Banned' : 'Active'}</Badge>
+      );
+    }
+  },
+  {
+    id: 'createdAt',
+    accessorKey: 'createdAt',
+    header: ({ column }: { column: Column<User, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Joined' />
+    ),
     cell: ({ cell }) => {
-      const status = cell.getValue<User['status']>();
-      const variant =
-        status === 'Active' ? 'default' : status === 'Inactive' ? 'secondary' : 'outline';
-      return <Badge variant={variant}>{status}</Badge>;
+      const date = new Date(cell.getValue<string>());
+      return <span className='text-muted-foreground text-sm'>{date.toLocaleDateString()}</span>;
     }
   },
   {

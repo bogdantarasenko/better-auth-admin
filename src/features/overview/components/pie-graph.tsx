@@ -9,55 +9,42 @@ import {
   ChartTooltip,
   ChartTooltipContent
 } from '@/components/ui/chart';
-import { Badge } from '@/components/ui/badge';
-import { Icons } from '@/components/icons';
+import type { RoleDistribution } from '@/features/overview/api/types';
 
-const chartData = [
-  { browser: 'chrome', visitors: 275, fill: 'var(--color-chrome)' },
-  { browser: 'safari', visitors: 200, fill: 'var(--color-safari)' },
-  { browser: 'firefox', visitors: 187, fill: 'var(--color-firefox)' },
-  { browser: 'edge', visitors: 173, fill: 'var(--color-edge)' },
-  { browser: 'other', visitors: 90, fill: 'var(--color-other)' }
-];
+const ROLE_COLORS: Record<string, string> = {
+  admin: 'var(--chart-1)',
+  user: 'var(--chart-2)',
+  owner: 'var(--chart-3)',
+  member: 'var(--chart-4)'
+};
 
-const chartConfig = {
-  visitors: {
-    label: 'Visitors'
-  },
-  chrome: {
-    label: 'Chrome',
-    color: 'var(--chart-1)'
-  },
-  safari: {
-    label: 'Safari',
-    color: 'var(--chart-2)'
-  },
-  firefox: {
-    label: 'Firefox',
-    color: 'var(--chart-3)'
-  },
-  edge: {
-    label: 'Edge',
-    color: 'var(--chart-4)'
-  },
-  other: {
-    label: 'Other',
-    color: 'var(--chart-5)'
-  }
-} satisfies ChartConfig;
+function buildChartConfig(data: RoleDistribution[]): ChartConfig {
+  const config: ChartConfig = {
+    count: { label: 'Users' }
+  };
+  data.forEach((d, i) => {
+    config[d.role] = {
+      label: d.role.charAt(0).toUpperCase() + d.role.slice(1),
+      color: ROLE_COLORS[d.role] ?? `var(--chart-${(i % 5) + 1})`
+    };
+  });
+  return config;
+}
 
-export function PieGraph() {
+export function PieGraph({ data }: { data: RoleDistribution[] }) {
+  const chartConfig = buildChartConfig(data);
+  const chartData = data.map((d) => ({
+    role: d.role,
+    count: d.count,
+    fill: ROLE_COLORS[d.role] ?? `var(--chart-${(data.indexOf(d) % 5) + 1})`
+  }));
+  const total = data.reduce((sum, d) => sum + d.count, 0);
+
   return (
     <Card className='flex h-full flex-col'>
       <CardHeader className='items-center pb-0'>
-        <CardTitle>
-          Pie Chart
-          <Badge variant='outline'>
-            <Icons.trendingUp />
-            +5.2%
-          </Badge>
-        </CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>Role Distribution</CardTitle>
+        <CardDescription>{total} total users</CardDescription>
       </CardHeader>
       <CardContent className='flex flex-1 items-center justify-center pb-0'>
         <ChartContainer
@@ -65,22 +52,23 @@ export function PieGraph() {
           className='[&_.recharts-text]:fill-background mx-auto aspect-square max-h-[300px] min-h-[250px]'
         >
           <PieChart>
-            <ChartTooltip content={<ChartTooltipContent nameKey='visitors' hideLabel />} />
+            <ChartTooltip content={<ChartTooltipContent nameKey='count' hideLabel />} />
             <Pie
               data={chartData}
               innerRadius={30}
-              dataKey='visitors'
+              dataKey='count'
+              nameKey='role'
               radius={10}
               cornerRadius={8}
               paddingAngle={4}
             >
               <LabelList
-                dataKey='visitors'
+                dataKey='role'
                 stroke='none'
                 fontSize={12}
                 fontWeight={500}
                 fill='currentColor'
-                formatter={(value: number) => value.toString()}
+                formatter={(value: string) => value.charAt(0).toUpperCase() + value.slice(1)}
               />
             </Pie>
           </PieChart>

@@ -6,15 +6,15 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { deleteUserMutation } from '../../api/mutations';
+import { deleteUserMutation, banUserMutation, unbanUserMutation } from '../../api/mutations';
 import type { User } from '../../api/types';
 import { Icons } from '@/components/icons';
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { UserFormSheet } from '../user-form-sheet';
 
 interface CellActionProps {
   data: User;
@@ -22,7 +22,6 @@ interface CellActionProps {
 
 export function CellAction({ data }: CellActionProps) {
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [editOpen, setEditOpen] = useState(false);
 
   const deleteMutation = useMutation({
     ...deleteUserMutation,
@@ -35,6 +34,26 @@ export function CellAction({ data }: CellActionProps) {
     }
   });
 
+  const banMutation = useMutation({
+    ...banUserMutation,
+    onSuccess: () => {
+      toast.success('User banned successfully');
+    },
+    onError: () => {
+      toast.error('Failed to ban user');
+    }
+  });
+
+  const unbanMutation = useMutation({
+    ...unbanUserMutation,
+    onSuccess: () => {
+      toast.success('User unbanned successfully');
+    },
+    onError: () => {
+      toast.error('Failed to unban user');
+    }
+  });
+
   return (
     <>
       <AlertModal
@@ -43,7 +62,6 @@ export function CellAction({ data }: CellActionProps) {
         onConfirm={() => deleteMutation.mutate(data.id)}
         loading={deleteMutation.isPending}
       />
-      <UserFormSheet user={data} open={editOpen} onOpenChange={setEditOpen} />
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button variant='ghost' className='h-8 w-8 p-0'>
@@ -53,9 +71,22 @@ export function CellAction({ data }: CellActionProps) {
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end'>
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => setEditOpen(true)}>
-            <Icons.edit className='mr-2 h-4 w-4' /> Update
-          </DropdownMenuItem>
+          {data.banned ? (
+            <DropdownMenuItem
+              onClick={() => unbanMutation.mutate(data.id)}
+              disabled={unbanMutation.isPending}
+            >
+              <Icons.check className='mr-2 h-4 w-4' /> Unban
+            </DropdownMenuItem>
+          ) : (
+            <DropdownMenuItem
+              onClick={() => banMutation.mutate({ id: data.id })}
+              disabled={banMutation.isPending}
+            >
+              <Icons.close className='mr-2 h-4 w-4' /> Ban
+            </DropdownMenuItem>
+          )}
+          <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => setDeleteOpen(true)}>
             <Icons.trash className='mr-2 h-4 w-4' /> Delete
           </DropdownMenuItem>

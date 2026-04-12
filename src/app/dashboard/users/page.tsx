@@ -21,7 +21,7 @@ export default async function UsersPage(props: PageProps) {
     <PageContainer
       scrollable={false}
       pageTitle='Users'
-      pageDescription='Manage users (React Query + nuqs table pattern.)'
+      pageDescription='Manage users from your better-auth database.'
       infoContent={usersInfoContent}
       pageHeaderAction={<UserFormSheetTrigger />}
     >

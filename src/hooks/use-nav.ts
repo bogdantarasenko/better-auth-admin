@@ -12,6 +12,7 @@
 
 import { useMemo } from 'react';
 import { authClient } from '@/lib/auth-client';
+import { authFeatures } from '@/config/auth-features';
 import type { NavItem, NavGroup } from '@/types';
 
 /**
@@ -21,6 +22,8 @@ import type { NavItem, NavGroup } from '@/types';
  * @returns Filtered items
  */
 export function useFilteredNavItems(items: NavItem[]) {
+  // Organization hooks are always called (React rules of hooks) but
+  // their results are ignored when organizations feature is disabled.
   const { data: activeOrg } = authClient.useActiveOrganization();
   const { data: session } = authClient.useSession();
   const { data: activeMember } = authClient.useActiveMember();
@@ -46,9 +49,7 @@ export function useFilteredNavItems(items: NavItem[]) {
         if (item.items && item.items.length > 0) {
           return {
             ...item,
-            items: item.items.filter((childItem) =>
-              checkAccess(childItem, accessContext)
-            )
+            items: item.items.filter((childItem) => checkAccess(childItem, accessContext))
           };
         }
 
@@ -69,6 +70,13 @@ interface AccessContext {
 function checkAccess(item: NavItem, ctx: AccessContext): boolean {
   if (!item.access) {
     return true;
+  }
+
+  // When organizations feature is disabled, skip all org-related checks
+  if (!authFeatures.organizations) {
+    if (item.access.requireOrg || item.access.permission || item.access.role) {
+      return true;
+    }
   }
 
   // Check requireOrg
@@ -97,9 +105,6 @@ function checkAccess(item: NavItem, ctx: AccessContext): boolean {
       return false;
     }
   }
-
-  // Plan/feature checks are handled at page level via subscription.list()
-  // Navigation items are shown, but pages enforce access with actual subscription data
 
   return true;
 }
