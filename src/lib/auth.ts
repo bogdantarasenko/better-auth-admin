@@ -11,7 +11,8 @@ export const auth = betterAuth({
     schema
   }),
   emailAndPassword: {
-    enabled: true
+    enabled: true,
+    disableSignUp: true
   },
   plugins: [
     nextCookies(),

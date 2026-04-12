@@ -28,6 +28,7 @@ export default function Providers({
           }}
           redirectTo='/dashboard/overview'
           Link={Link}
+          signUp={false}
         >
           <QueryProvider>{children}</QueryProvider>
         </AuthUIProvider>
